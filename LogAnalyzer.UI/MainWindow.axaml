@@ -14,11 +14,16 @@
 
     <Button Content="Загрузить лог"
             Command="{Binding LoadFileCommand}"/>
+    <Button Content="Анализировать"
+            Command="{Binding AnalyzeCommand}" />
 
     <DataGrid ItemsSource="{Binding Logs}"
               AutoGenerateColumns="True"
               Height="300"/>
-
+    <ListBox ItemsSource="{Binding Result.TopIPs}" />
+    <ListBox ItemsSource="{Binding Result.BadIP_total}" />
+    <ListBox ItemsSource="{Binding Result.BadIP_in_row}" />
+    <ListBox ItemsSource="{Binding Result.BadIP_by_time}" />
     </StackPanel>
     
 </Window>
