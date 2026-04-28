@@ -1,0 +1,14 @@
+/Users/arthurgek/Documents/Visual_Code_Projects/KURSOVAYA_1_KURS/Kursach/LogAnalyzer/bin/Debug/net10.0/LogAnalyzer
+/Users/arthurgek/Documents/Visual_Code_Projects/KURSOVAYA_1_KURS/Kursach/LogAnalyzer/bin/Debug/net10.0/LogAnalyzer.deps.json
+/Users/arthurgek/Documents/Visual_Code_Projects/KURSOVAYA_1_KURS/Kursach/LogAnalyzer/bin/Debug/net10.0/LogAnalyzer.runtimeconfig.json
+/Users/arthurgek/Documents/Visual_Code_Projects/KURSOVAYA_1_KURS/Kursach/LogAnalyzer/bin/Debug/net10.0/LogAnalyzer.dll
+/Users/arthurgek/Documents/Visual_Code_Projects/KURSOVAYA_1_KURS/Kursach/LogAnalyzer/bin/Debug/net10.0/LogAnalyzer.pdb
+/Users/arthurgek/Documents/Visual_Code_Projects/KURSOVAYA_1_KURS/Kursach/LogAnalyzer/obj/Debug/net10.0/LogAnalyzer.GeneratedMSBuildEditorConfig.editorconfig
+/Users/arthurgek/Documents/Visual_Code_Projects/KURSOVAYA_1_KURS/Kursach/LogAnalyzer/obj/Debug/net10.0/LogAnalyzer.AssemblyInfoInputs.cache
+/Users/arthurgek/Documents/Visual_Code_Projects/KURSOVAYA_1_KURS/Kursach/LogAnalyzer/obj/Debug/net10.0/LogAnalyzer.AssemblyInfo.cs
+/Users/arthurgek/Documents/Visual_Code_Projects/KURSOVAYA_1_KURS/Kursach/LogAnalyzer/obj/Debug/net10.0/LogAnalyzer.csproj.CoreCompileInputs.cache
+/Users/arthurgek/Documents/Visual_Code_Projects/KURSOVAYA_1_KURS/Kursach/LogAnalyzer/obj/Debug/net10.0/LogAnalyzer.dll
+/Users/arthurgek/Documents/Visual_Code_Projects/KURSOVAYA_1_KURS/Kursach/LogAnalyzer/obj/Debug/net10.0/refint/LogAnalyzer.dll
+/Users/arthurgek/Documents/Visual_Code_Projects/KURSOVAYA_1_KURS/Kursach/LogAnalyzer/obj/Debug/net10.0/LogAnalyzer.pdb
+/Users/arthurgek/Documents/Visual_Code_Projects/KURSOVAYA_1_KURS/Kursach/LogAnalyzer/obj/Debug/net10.0/LogAnalyzer.genruntimeconfig.cache
+/Users/arthurgek/Documents/Visual_Code_Projects/KURSOVAYA_1_KURS/Kursach/LogAnalyzer/obj/Debug/net10.0/ref/LogAnalyzer.dll
