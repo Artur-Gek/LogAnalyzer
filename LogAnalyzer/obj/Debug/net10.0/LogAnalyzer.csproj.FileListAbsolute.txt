@@ -12,3 +12,4 @@
 /Users/arthurgek/Documents/Visual_Code_Projects/KURSOVAYA_1_KURS/Kursach/LogAnalyzer/obj/Debug/net10.0/LogAnalyzer.pdb
 /Users/arthurgek/Documents/Visual_Code_Projects/KURSOVAYA_1_KURS/Kursach/LogAnalyzer/obj/Debug/net10.0/LogAnalyzer.genruntimeconfig.cache
 /Users/arthurgek/Documents/Visual_Code_Projects/KURSOVAYA_1_KURS/Kursach/LogAnalyzer/obj/Debug/net10.0/ref/LogAnalyzer.dll
+/Users/arthurgek/Documents/Visual_Code_Projects/KURSOVAYA_1_KURS/Kursach/LogAnalyzer/obj/Debug/net10.0/LogAnalyzer.sourcelink.json

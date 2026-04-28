@@ -10,6 +10,15 @@
         
         Title="LogAnalyzer.UI">
     
-    <DataGrid ItemsSource="{Binding Logs}" AutoGenerateColumns="True"/>
+    <StackPanel Spacing="10">
+
+    <Button Content="Загрузить лог"
+            Command="{Binding LoadFileCommand}"/>
+
+    <DataGrid ItemsSource="{Binding Logs}"
+              AutoGenerateColumns="True"
+              Height="300"/>
+
+    </StackPanel>
     
 </Window>
