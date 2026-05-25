@@ -20,10 +20,25 @@
     <DataGrid ItemsSource="{Binding Logs}"
               AutoGenerateColumns="True"
               Height="300"/>
-    <ListBox ItemsSource="{Binding Result.TopIPs}" />
-    <ListBox ItemsSource="{Binding Result.BadIP_total}" />
-    <ListBox ItemsSource="{Binding Result.BadIP_in_row}" />
-    <ListBox ItemsSource="{Binding Result.BadIP_by_time}" />
+    <DataGrid ItemsSource="{Binding SuspiciousIps}"
+
+          AutoGenerateColumns="False"
+
+          Height="450">
+
+    <DataGrid.Columns>
+
+        <DataGridTextColumn Header="IP"
+
+                            Binding="{Binding Ip}" />
+
+        <DataGridTextColumn Header="Причина"
+
+                            Binding="{Binding Reason}" />
+
+    </DataGrid.Columns>
+
+</DataGrid>
     </StackPanel>
     
 </Window>

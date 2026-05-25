@@ -11,9 +11,11 @@ using LogAnalyzer.Analyzer;
 using AnalyzerLib = LogAnalyzer.Analyzer;
 using System;
 
+
 public class MainWindowViewModel: ViewModelBase
 
 {
+    public ObservableCollection<SuspiciousIp> SuspiciousIps { get; set; } = new();
 
     public ICommand AnalyzeCommand { get; }
     private ObservableCollection<LogEntry> _logs = new();
@@ -50,6 +52,34 @@ public class MainWindowViewModel: ViewModelBase
         if (Logs == null || Logs.Count == 0)
             return;
         Result = AnalyzerLib.Analyzer.Analyze(Logs.ToList());
+        SuspiciousIps.Clear();
+
+        foreach (var ip in Result.BadIP_total)
+        {
+            SuspiciousIps.Add(new SuspiciousIp
+            {
+                Ip = ip,
+                Reason = "Много ошибок"
+            });
+        }
+
+        foreach (var ip in Result.BadIP_in_row)
+        {
+            SuspiciousIps.Add(new SuspiciousIp
+            {
+                Ip = ip,
+                Reason = "Ошибки подряд"
+            });
+        }
+
+        foreach (var ip in Result.BadIP_by_time)
+        {
+            SuspiciousIps.Add(new SuspiciousIp
+            {
+                Ip = ip,
+                Reason = "Подозрительная активность за короткое время"
+            });
+    }
     }
     private async Task LoadFile()
     {
@@ -86,8 +116,6 @@ public class MainWindowViewModel: ViewModelBase
             catch (Exception ex)
 
             {
-
-                // можно потом сделать UI-лог ошибок
 
                 Console.WriteLine(ex.Message);
 
