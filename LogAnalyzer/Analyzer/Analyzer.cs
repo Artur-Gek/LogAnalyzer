@@ -1,85 +1,72 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using LogAnalyzer.Models;
-using LogAnalyzer.Analyzer;
 using System.Linq;
+using LogAnalyzer.Models;
+
 namespace LogAnalyzer.Analyzer
 {
     public static class Analyzer
     {
-        public static AnalysisResult Analyze(List<LogEntry> logs)
+        // Сколько неудачных попыток считаем подозрительными
+        public const int DefaultThreshold = 4;
+        // Ширина скользящего окна для правила «много попыток за короткое время»
+        public static readonly TimeSpan DefaultWindow = TimeSpan.FromSeconds(10);
+        public const int DefaultTopCount = 3;
+
+        public static AnalysisResult Analyze(List<LogEntry> logs) =>
+            Analyze(logs, DefaultThreshold, DefaultWindow, DefaultTopCount);
+
+        public static AnalysisResult Analyze(List<LogEntry> logs, int threshold, TimeSpan window, int topCount)
         {
-            Dictionary<string,int> FailStat = new();
-            Dictionary<string,int> FailInRow = new();
-            Dictionary<string, Queue<DateTime>> FailByTime = new();
-            HashSet<string> BadIP_total = new();
-            HashSet<string> BadIP_in_row = new();
-            HashSet<string> BadIP_by_time= new();
-            int threshold = 4;
+            var failTotal = new Dictionary<string, int>();
+            var failInRow = new Dictionary<string, int>();
+            var failTimes = new Dictionary<string, Queue<DateTime>>();
+            var result = new AnalysisResult();
 
-            foreach(var i in logs)
-                {
-                    if (!FailInRow.ContainsKey(i.Ip))
-                    {
-                        FailInRow[i.Ip] = 0;
-                    }
-                    if (i.Status)
-                    {
-                        FailInRow[i.Ip] = 0;
-                    }
-                    else
-                    {
-                        FailInRow[i.Ip] += 1;
-                        if (FailInRow[i.Ip] >= threshold)
-                        {
-                            BadIP_in_row.Add(i.Ip);
-                        }
-                        if (!FailStat.ContainsKey(i.Ip))
-                        {
-                            FailStat[i.Ip] = 1;
-                        }
-                        else
-                        {
-                            FailStat[i.Ip] += 1;
-                        }
-                        if (!FailByTime.ContainsKey(i.Ip))
-                        {
-                            FailByTime[i.Ip]=new();
-                            FailByTime[i.Ip].Enqueue(i.Date);
-                        }
-                        else
-                        {
-                            double difference = (i.Date - FailByTime[i.Ip].Peek() ).TotalSeconds;
-                            while(difference > 10 && FailByTime[i.Ip].Count>0)
-                            {
-                                FailByTime[i.Ip].Dequeue();
-                            }
-
-                            FailByTime[i.Ip].Enqueue(i.Date);
-                            if (FailByTime[i.Ip].Count >= threshold)
-                            {
-                                BadIP_by_time.Add(i.Ip);
-                            }
-                        }
-                    }
-                }
-            foreach(var stat in FailStat)
+            // Правило «по времени» требует хронологического порядка
+            foreach (var entry in logs.OrderBy(l => l.Date))
             {
-                if (stat.Value >= threshold)
+                if (entry.Status)
                 {
-                    BadIP_total.Add(stat.Key);
+                    // Успешный вход обрывает серию неудач подряд
+                    failInRow[entry.Ip] = 0;
+                    continue;
                 }
+
+                // 1. Неудачи подряд
+                failInRow[entry.Ip] = failInRow.GetValueOrDefault(entry.Ip) + 1;
+                if (failInRow[entry.Ip] >= threshold)
+                    result.BadIP_in_row.Add(entry.Ip);
+
+                // 2. Общее число неудач
+                failTotal[entry.Ip] = failTotal.GetValueOrDefault(entry.Ip) + 1;
+
+                // 3. Скользящее окно: выкидываем из очереди попытки старше окна
+                if (!failTimes.TryGetValue(entry.Ip, out var times))
+                {
+                    times = new Queue<DateTime>();
+                    failTimes[entry.Ip] = times;
+                }
+                while (times.Count > 0 && entry.Date - times.Peek() > window)
+                    times.Dequeue();
+                times.Enqueue(entry.Date);
+                if (times.Count >= threshold)
+                    result.BadIP_by_time.Add(entry.Ip);
             }
-            int topThree = 3;
-            var topIPs = FailStat.OrderByDescending(x => x.Value).Take(topThree).ToList();
-            return new AnalysisResult
+
+            foreach (var (ip, count) in failTotal)
             {
-                BadIP_total = BadIP_total,
-                BadIP_in_row = BadIP_in_row,
-                BadIP_by_time = BadIP_by_time,
-                TopIPs = topIPs
-            };
+                if (count >= threshold)
+                    result.BadIP_total.Add(ip);
+            }
+
+            result.TopIPs = failTotal
+                .OrderByDescending(x => x.Value)
+                .ThenBy(x => x.Key)
+                .Take(topCount)
+                .ToList();
+
+            return result;
         }
     }
 }

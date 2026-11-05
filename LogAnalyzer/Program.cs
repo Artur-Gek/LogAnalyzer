@@ -1,46 +1,57 @@
 ﻿using System;
-using LogAnalyzer.Models;
 using System.Collections.Generic;
 using System.IO;
 using LogAnalyzer.Analyzer;
+using LogAnalyzer.Models;
 
 class Program
 {
-    static void Main(string[] args)
+    static int Main(string[] args)
     {
-        List<LogEntry> SpisokLogovObr = new List<LogEntry>();
-        
-        string[] SpisokLogov= File.ReadAllLines("/Users/arthurgek/Documents/Visual_Code_Projects/KURSOVAYA_1_KURS/Kursach/logs.txt");
-
-        foreach(var line in SpisokLogov)
+        // Путь к журналу передаётся аргументом: dotnet run -- logs.txt
+        string path = args.Length > 0 ? args[0] : "logs.txt";
+        if (!File.Exists(path))
         {
-            SpisokLogovObr.Add(LogParser.Parse(line));
+            Console.Error.WriteLine($"Файл не найден: {path}");
+            Console.Error.WriteLine("Использование: dotnet run --project LogAnalyzer -- <путь к логам>");
+            return 1;
         }
-        var result = Analyzer.Analyze(SpisokLogovObr);
 
-        Console.WriteLine("=== Подозрительные IP (общее количество) ===");
-        foreach (var ip in result.BadIP_total)
+        var logs = new List<LogEntry>();
+        int lineNumber = 0;
+        foreach (var line in File.ReadLines(path))
         {
+            lineNumber++;
+            if (string.IsNullOrWhiteSpace(line))
+                continue;
+            try
+            {
+                logs.Add(LogParser.Parse(line));
+            }
+            catch (FormatException ex)
+            {
+                // Одна битая строка не должна ронять весь анализ
+                Console.Error.WriteLine($"Строка {lineNumber} пропущена: {ex.Message}");
+            }
+        }
+
+        var result = Analyzer.Analyze(logs);
+
+        Print("Подозрительные IP (общее количество неудач)", result.BadIP_total);
+        Print("Подозрительные IP (неудачи подряд)", result.BadIP_in_row);
+        Print("Подозрительные IP (много попыток за короткое время)", result.BadIP_by_time);
+
+        Console.WriteLine("\n=== Топ IP по числу неудач ===");
+        foreach (var (ip, count) in result.TopIPs)
+            Console.WriteLine($"{ip} — {count}");
+
+        return 0;
+    }
+
+    static void Print(string title, IEnumerable<string> ips)
+    {
+        Console.WriteLine($"\n=== {title} ===");
+        foreach (var ip in ips)
             Console.WriteLine(ip);
-        }
-
-        Console.WriteLine("\n=== Подозрительные IP (подряд) ===");
-        foreach (var ip in result.BadIP_in_row)
-        {
-            Console.WriteLine(ip);
-        }
-
-        Console.WriteLine("\n=== Подозрительные IP (по времени) ===");
-        foreach (var ip in result.BadIP_by_time)
-        {
-            Console.WriteLine(ip);
-        }
-
-        Console.WriteLine("\n=== Топ IP ===");
-        foreach (var ip in result.TopIPs)
-        {
-            Console.WriteLine($"{ip.Key} — {ip.Value}");
-        }
-        
     }
 }
